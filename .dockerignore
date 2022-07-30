@@ -1,0 +1,6 @@
+.gitignore
+LICSENSE
+*.md
+node_modules
+npm-debug.log
+.DS_Store

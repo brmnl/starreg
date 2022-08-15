@@ -65,6 +65,23 @@ class Blockchain {
         let self = this;
         return new Promise(async (resolve, reject) => {
            
+            if (this.height > -1) {
+                block.previousBlockHash = self.chain[self.height].hash;
+            }
+            
+            block.time = new Date().getTime().toString().slice(0,-3);
+            block.height = self.height+1;
+            block.hash = SHA256(JSON.stringify(block)).toString();
+            
+            let err = await self.validateChain();
+
+            if (err.length === 0) {
+                self.chain.push(block);
+                self.height++; 
+                resolve(block);
+            } else { 
+                reject(err); 
+            }
         });
     }
 
@@ -78,7 +95,7 @@ class Blockchain {
      */
     requestMessageOwnershipVerification(address) {
         return new Promise((resolve) => {
-            
+            resolve('${address}:${Date.now().toString().slice(0,-3)}:starRegistry');
         });
     }
 
@@ -102,7 +119,18 @@ class Blockchain {
     submitStar(address, message, signature, star) {
         let self = this;
         return new Promise(async (resolve, reject) => {
-            
+
+            let regTime = parseInt(message.split(':')[1]);
+            let currentTime = parseInt(new Date().getTime().toString().slice(0, -3));
+
+            // Within 5 minutes and message has been successfully verified
+            if (currentTime - regTime < 300 && bitcoinMessage.verify(message, address, signature))  {
+                let block = new BlockClass.Block({'address': address, 'message': message, 'signature': signature, 'star': star});
+                await self._addBlock(block);
+                resolve(block);
+            } else {
+                reject('Invalid signature or message expired');
+            } 
         });
     }
 
@@ -115,7 +143,12 @@ class Blockchain {
     getBlockByHash(hash) {
         let self = this;
         return new Promise((resolve, reject) => {
-           
+            let block = self.chain.filter(p => p.hash === hash)[0];
+            if(block){
+                resolve(block);
+            } else {
+                resolve(null);
+            }
         });
     }
 

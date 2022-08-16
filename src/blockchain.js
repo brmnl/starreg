@@ -179,7 +179,7 @@ class Blockchain {
         let self = this;
         let stars = [];
         return new Promise((resolve, reject) => {
-            
+            resolve(self.chain.filter(p =>p.getBData().address === address));
         });
     }
 
@@ -192,7 +192,21 @@ class Blockchain {
     validateChain() {
         let self = this;
         let errorLog = [];
+        let chainIsValid = true;
         return new Promise(async (resolve, reject) => {
+
+            for (let b=1; b < self.chain.length; b++) { // skipping genesis block
+                if (!b.validate()) {
+                    chainIsValid = false;
+                    errorLog.push('Block ${b.height} is invalid');
+                }
+            }
+
+            if (chainIsValid) {
+                resolve(true);
+            } else {
+                reject(errorLog);
+            }
             
         });
     }

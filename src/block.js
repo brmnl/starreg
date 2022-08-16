@@ -47,10 +47,10 @@ class Block {
             // Comparing if the hashes changed
             if (currBlockHash !== recalcBlockHash) {
                 // Returning the Block is not valid
-                reject('Block is not valid');
+                reject(false);
             } else {
                 // Returning the Block is valid
-                resolve('Block is valid');
+                resolve(true);
             }
         });
     }

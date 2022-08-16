@@ -203,11 +203,11 @@ class Blockchain {
             }
 
             if (chainIsValid) {
-                resolve(true);
+                resolve(errorLog);
             } else {
                 reject(errorLog);
             }
-            
+
         });
     }
 

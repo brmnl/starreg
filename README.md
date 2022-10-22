@@ -1,4 +1,4 @@
-# Blockchain based star registry (MVP)
+# Star registry based on a private blockchain (MVP)
 
 This is a minimum viable product for a star registry based on a simple private blockchain.
 

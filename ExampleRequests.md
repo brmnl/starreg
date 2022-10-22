@@ -1,19 +1,19 @@
-# Example Requests for Testing / Demo
+# Example Requests for Testing / Demo
 
 ## Verify Genesis Block
 
-#### Request 
+#### Request 
 
 ```
 GET http://localhost:8000/block/height/0
 ```
 
-#### Example Payload
+#### Example Payload
 
 ```
 ```
 
-#### Example Output
+#### Example Output
 
 ```
 {
@@ -27,13 +27,13 @@ GET http://localhost:8000/block/height/0
 
 ## Request Ownership Verification of Bitcoin Wallet Address
 
-#### Request 
+#### Request 
 
 ```
 POST http://localhost:8000/requestValidation
 ```
 
-#### Example Payload 
+#### Example Payload 
 
 ```
 {
@@ -41,7 +41,7 @@ POST http://localhost:8000/requestValidation
 }
 ```
 
-#### Example Output
+#### Example Output
 
 ```
 "1HZwkjkeaoZfTSaJxDw6aKkxp45agDiEzN:1666432310:starRegistry"
@@ -51,7 +51,7 @@ POST http://localhost:8000/requestValidation
 
 see documentation of your Bitcoin wallet
 
-#### Example Output
+#### Example Output
 
 ```
 Message: "1HZwkjkeaoZfTSaJxDw6aKkxp45agDiEzN:1666432310:starRegistry"
@@ -61,13 +61,13 @@ Signature: Gwgll6qJP/liIcCnazNL7GcxHH+eexg08S3v62Jh1OivGXrktTYj2Wnj8er4CozRm3kCB
 
 ## Submit Star Registration
 
-#### Request 
+#### Request 
 
 ```
 POST http://localhost:8000/submitStar
 ```
 
-#### Example Payload 
+#### Example Payload 
 
 ```
 {
@@ -81,7 +81,7 @@ POST http://localhost:8000/submitStar
 }
 ```
 
-#### Example Output
+#### Example Output
 
 ```
 {
@@ -95,18 +95,18 @@ POST http://localhost:8000/submitStar
 
 ## List Stars Owned by Address
 
-#### Request 
+#### Request 
 
 ```
 GET http://localhost:8000/blocks/1HZwkjkeaoZfTSaJxDw6aKkxp45agDiEzN
 ```
 
-#### Example Payload 
+#### Example Payload 
 
 ```
 ```
 
-#### Example Output
+#### Example Output
 
 ```
 [
@@ -115,7 +115,7 @@ GET http://localhost:8000/blocks/1HZwkjkeaoZfTSaJxDw6aKkxp45agDiEzN
         "message": "1HZwkjkeaoZfTSaJxDw6aKkxp45agDiEzN:1666432310:starRegistry",
         "signature": "Gwgll6qJP/liIcCnazNL7GcxHH+eexg08S3v62Jh1OivGXrktTYj2Wnj8er4CozRm3kCBvqGR8W6aSEU+S6QogU=",
         "star": {
-            "dec": "â62Â° 40â² 48â³",
+            "dec": "−62° 40′ 48″",
             "ra": "14h 28m 43.0s",
             "story": "Proxima Centauri 18"
         }

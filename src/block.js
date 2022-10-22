@@ -16,11 +16,11 @@ class Block {
 
     // Constructor - argument data will be the object containing the transaction data
 	constructor(data){
-		this.hash = null;                                           // Hash of the block
-		this.height = 0;                                            // Block Height (consecutive number of each block)
+		this.hash = null;                                                // Hash of the block
+		this.height = 0;                                                 // Block Height (consecutive number of each block)
 		this.body = Buffer.from(JSON.stringify(data)).toString('hex');   // Will contain the transactions stored in the block, by default it will encode the data
-		this.time = 0;                                              // Timestamp for the Block creation
-		this.previousBlockHash = null;                              // Reference to the previous Block Hash
+		this.time = 0;                                                   // Timestamp for the Block creation
+		this.previousBlockHash = null;                                   // Reference to the previous Block Hash
     }
     
     /**
@@ -40,14 +40,17 @@ class Block {
         return new Promise((resolve, reject) => {
             // Save in auxiliary variable the current block hash
             let currBlockHash = self.hash; 
-                                            
+            self.hash = null; // remove current hash for recalc - otherwise calculated result will be wrong
+
             // Recalculate the hash of the Block
             let recalcBlockHash = SHA256(JSON.stringify(self)).toString();
+
+            self.hash = currBlockHash;
 
             // Comparing if the hashes changed
             if (currBlockHash !== recalcBlockHash) {
                 // Returning the Block is not valid
-                reject(false);
+                resolve(false);
             } else {
                 // Returning the Block is valid
                 resolve(true);
@@ -70,17 +73,17 @@ class Block {
         return new Promise((resolve, reject) => {
             // Decoding the data to retrieve the JSON representation of the object
             // Parse the data to an object to be retrieve.
-            let decodedData = JSON.parse(hex2ascii(this.body));
+            let decodedData = JSON.parse(hex2ascii(self.body));
 
             // Resolve with the data if the object isn't the Genesis block
-            if (this.height === 0) {
-                reject('Not authorized to view genesis block');
+            if (self.height === 0) {
+                resolve('Not authorized to view genesis block');
             } else {
-                resolve (decodedData);
+                resolve(decodedData);
             }
         });
     }
 
 }
 
-module.exports.Block = Block;                    // Exposing the Block class as a module
+module.exports.Block = Block; // Exposing the Block class as a module

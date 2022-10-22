@@ -72,9 +72,9 @@ class Blockchain {
             block.time = new Date().getTime().toString().slice(0,-3);
             block.height = self.height+1;
             block.hash = SHA256(JSON.stringify(block)).toString();
-            
+         
             let err = await self.validateChain();
-
+            
             if (err.length === 0) {
                 self.chain.push(block);
                 self.height++; 
@@ -95,7 +95,7 @@ class Blockchain {
      */
     requestMessageOwnershipVerification(address) {
         return new Promise((resolve) => {
-            resolve('${address}:${Date.now().toString().slice(0,-3)}:starRegistry');
+            resolve(`${address}:${Date.now().toString().slice(0,-3)}:starRegistry`);
         });
     }
 
@@ -122,9 +122,10 @@ class Blockchain {
 
             let regTime = parseInt(message.split(':')[1]);
             let currentTime = parseInt(new Date().getTime().toString().slice(0, -3));
+            let verify = await bitcoinMessage.verify(message, address, signature);
 
             // Within 5 minutes and message has been successfully verified
-            if (currentTime - regTime < 300 && bitcoinMessage.verify(message, address, signature))  {
+            if (currentTime - regTime < 300 && verify)  { // 300
                 let block = new BlockClass.Block({'address': address, 'message': message, 'signature': signature, 'star': star});
                 await self._addBlock(block);
                 resolve(block);
@@ -178,8 +179,23 @@ class Blockchain {
     getStarsByWalletAddress (address) {
         let self = this;
         let stars = [];
+
         return new Promise((resolve, reject) => {
-            resolve(self.chain.filter(p =>p.getBData().address === address));
+            self.chain.forEach(async(b) => {
+                let blockData = await b.getBData();
+
+                if(blockData){
+                    if (blockData.address === address){
+                        stars.push(blockData);
+                    }
+                 }
+            });
+
+            if(stars){
+                resolve(stars);
+            } else {
+                resolve(null);
+            }
         });
     }
 
@@ -192,17 +208,32 @@ class Blockchain {
     validateChain() {
         let self = this;
         let errorLog = [];
-        let chainIsValid = true;
         return new Promise(async (resolve, reject) => {
+            
+            self.chain.forEach(async(b) => {
 
-            for (let b=1; b < self.chain.length; b++) { // skipping genesis block
-                if (!b.validate()) {
-                    chainIsValid = false;
-                    errorLog.push('Block ${b.height} is invalid');
-                }
-            }
+                if (b.height > -1) { // skipping genesis block
 
-            if (chainIsValid) {
+                    // Validate block integrity
+                    let blockIsValid = await b.validate();
+
+                    if(!blockIsValid){                    
+                        errorLog.push('Block %s is invalid', b.height);
+                    }
+
+                    // Validate chain integrity
+                    if (b.height !== 0) // do not check previous block of genesis block because there isn't one ;-)
+                    {
+                        let prevBlock = self.chain.filter(p => p.height === b.height - 1)[0];
+
+                        if(b.previousBlockHash !== prevBlock.hash){
+                            errorLog.push('Block %s has previousBlockHash value that does not match with the hash of previous block in the chain', b.height);
+                        }
+                    }
+                } 
+            });
+
+            if (errorLog.length === 0) {
                 resolve(errorLog);
             } else {
                 reject(errorLog);
@@ -210,7 +241,6 @@ class Blockchain {
 
         });
     }
-
 }
 
-module.exports.Blockchain = Blockchain;   
+module.exports.Blockchain = Blockchain;

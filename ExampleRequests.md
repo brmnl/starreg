@@ -8,11 +8,6 @@
 GET http://localhost:8000/block/height/0
 ```
 
-#### Example Payload
-
-```
-```
-
 #### Example Output
 
 ```
@@ -99,11 +94,6 @@ POST http://localhost:8000/submitStar
 
 ```
 GET http://localhost:8000/blocks/1HZwkjkeaoZfTSaJxDw6aKkxp45agDiEzN
-```
-
-#### Example Payload 
-
-```
 ```
 
 #### Example Output
